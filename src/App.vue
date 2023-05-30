@@ -1,85 +1,79 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="flex flex-col items-center justify-center w-screen mt-4">
+    <div class="flex-col w-9/12">
+      <div class="flex items-center justify-between h-12 bg-slate-100">
+        <h1 class="ml-4 flex-start">focusStopwatch.com</h1>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+        <ul class="flex mr-4 space-x-6">
+          <li>Report</li>
+          <li>{{ counter }}</li>
+        </ul>
+      </div>
+      <div class="flex flex-col items-center justify-center space-y-5 bg-blue-500 min-h-1/2">
+        <div class="flex justify-center space-x-5">
+          <div class="p-5 text-white bg-black rounded-lg">{{ formatedHour }}</div>
+          <div class="p-5 text-white bg-black rounded-lg">{{ formatedMinute }}</div>
+          <div class="p-5 text-white bg-black rounded-lg">{{ formatedSecond }}</div>
+        </div>
+        <button class="bg-red-500" @click="startButton">{{ buttonText }}</button>
+      </div>
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
+<script>
+export default {
+  data() {
+    return {
+      isStopwatchRunning: false,
+      secondCounter: 0,
+      minuteCounter: 0,
+      hourCounter: 0,
+      intervalId: null,
+      buttonText: 'Start'
+    }
+  },
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+  computed: {
+    formatedSecond() {
+      return this.secondCounter.toString().padStart(2, '0')
+    },
+    formatedMinute() {
+      return this.minuteCounter.toString().padStart(2, '0')
+    },
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
+    formatedHour() {
+      return this.hourCounter.toString().padStart(2, '0')
+    }
+  },
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  methods: {
+    startButton() {
+      // action buat calculate the numbers
+      if (this.isStopwatchRunning) {
+        this.secondCounter = 0
+        this.minuteCounter = 0
+        this.hourCounter = 0
+        this.isStopwatchRunning = false
+        clearInterval(this.intervalId)
+        this.intervalId = null
+        this.buttonText = 'Start'
+      } else {
+        this.isStopwatchRunning = true
+        this.buttonText = 'Reset and Lap'
+        this.intervalId = setInterval(() => {
+          this.secondCounter += 1
+          if (this.secondCounter === 60) {
+            this.secondCounter = 0
+            this.minuteCounter += 1
+          }
+          if (this.minuteCounter === 60) {
+            this.minuteCounter = 0
+            this.hourCounter += 1
+          }
+        }, 1000)
+      }
+    }
   }
 }
-</style>
+</script>
