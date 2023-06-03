@@ -1,5 +1,79 @@
 // eslint-disable-next-line eslint-comments/no-unused-disable
+<script setup>
+import { onMounted, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from './supabase.js'
+
+const session = ref(null)
+const totalCounter = ref(0)
+const secondCounter = ref(0)
+const minuteCounter = ref(0)
+const hourCounter = ref(0)
+const intervalId = ref(null)
+const buttonText = ref('Start')
+const laps = ref([])
+
+onMounted(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    session.value = data.session
+  })
+
+  supabase.auth.onAuthStateChange((_, _session) => {
+    session.value = _session
+  })
+})
+
+const formattedSecond = computed(() => secondCounter.value.toString().padStart(2, '0'))
+const formattedMinute = computed(() => minuteCounter.value.toString().padStart(2, '0'))
+const formattedHour = computed(() => hourCounter.value.toString().padStart(2, '0'))
+
+const formattedLaps = (index) => {
+  const lap = laps.value[index]
+  const hours = Math.floor(lap / 3600)
+    .toString()
+    .padStart(2, '0')
+  const minutes = Math.floor((lap % 3600) / 60)
+    .toString()
+    .padStart(2, '0')
+  const seconds = (lap % 60).toString().padStart(2, '0')
+  return `${hours}:${minutes}:${seconds}`
+}
+
+const startButton = () => {
+  if (intervalId.value !== null) {
+    secondCounter.value = 0
+    minuteCounter.value = 0
+    hourCounter.value = 0
+    clearInterval(intervalId.value)
+    intervalId.value = null
+    buttonText.value = 'Start'
+    laps.value.push(totalCounter.value)
+    totalCounter.value = 0
+  } else {
+    buttonText.value = 'Reset and Lap'
+    intervalId.value = setInterval(() => {
+      secondCounter.value += 1
+      totalCounter.value += 1
+      if (secondCounter.value === 60) {
+        secondCounter.value = 0
+        minuteCounter.value += 1
+      }
+      if (minuteCounter.value === 60) {
+        minuteCounter.value = 0
+        hourCounter.value += 1
+      }
+    }, 1000)
+  }
+}
+
+const router = useRouter()
+const goToSignIn = () => {
+  router.push({ name: 'SignIn' })
+}
+</script>
+
 <template>
+  <router-view />
   <div class="flex flex-col items-center justify-center w-screen mt-4">
     <div class="flex-col w-9/12">
       <div class="flex items-center justify-between h-12 bg-slate-100">
@@ -7,9 +81,12 @@
 
         <ul class="flex mr-4 space-x-6">
           <li>Report</li>
-          <li>Login</li>
+          <li>
+            <button @click="goToSignIn">Sign In</button>
+          </li>
         </ul>
       </div>
+
       <div class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500 min-h-1/2">
         <div class="flex justify-center space-x-5">
           <div class="p-5 text-white bg-black rounded-lg">{{ formattedHour }}</div>
@@ -35,83 +112,35 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      totalCounter: 0,
-      secondCounter: 0,
-      minuteCounter: 0,
-      hourCounter: 0,
-      intervalId: null,
-      buttonText: 'Start',
-      laps: []
-    }
-  },
-
-  computed: {
-    formattedSecond() {
-      return this.secondCounter.toString().padStart(2, '0')
-    },
-    formattedMinute() {
-      return this.minuteCounter.toString().padStart(2, '0')
-    },
-
-    formattedHour() {
-      return this.hourCounter.toString().padStart(2, '0')
-    },
-
-    formattedLaps() {
-      return (index) => {
-        const lap = this.laps[index]
-        const hours = Math.floor(lap / 3600)
-          .toString()
-          .padStart(2, '0')
-        const minutes = Math.floor((lap % 3600) / 60)
-          .toString()
-          .padStart(2, '0')
-        const seconds = (lap % 60).toString().padStart(2, '0')
-        return `${hours}:${minutes}:${seconds}`
-      }
-    }
-  },
-
-  methods: {
-    startButton() {
-      if (this.intervalId !== null) {
-        this.secondCounter = 0
-        this.minuteCounter = 0
-        this.hourCounter = 0
-        this.isStopwatchRunning = false
-        clearInterval(this.intervalId)
-        this.intervalId = null
-        this.buttonText = 'Start'
-        this.laps.push(this.totalCounter)
-        this.totalCounter = 0
-      } else {
-        this.isStopwatchRunning = true
-        this.buttonText = 'Reset and Lap'
-        this.intervalId = setInterval(() => {
-          this.secondCounter += 1
-          this.totalCounter += 1
-          if (this.secondCounter === 60) {
-            this.secondCounter = 0
-            this.minuteCounter += 1
-          }
-          if (this.minuteCounter === 60) {
-            this.minuteCounter = 0
-            this.hourCounter += 1
-          }
-        }, 1000)
-      }
-    }
-  }
-}
-</script>
-
 <style scoped>
 .separator {
   border-left: 1px solid black;
   margin: 0 8px;
 }
 </style>
+
+<!-- <script setup>
+import { onMounted, ref } from 'vue'
+import Account from './Account.vue'
+import Auth from './Auth.vue'
+import { supabase } from './supabase.js'
+
+const session = ref()
+
+onMounted(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    session.value = data.session
+  })
+
+  supabase.auth.onAuthStateChange((_, _session) => {
+    session.value = _session
+  })
+})
+</script>
+
+<template>
+  <div class="container" style="padding: 50px 0 100px 0">
+    <Account v-if="session" :session="session" />
+    <Auth v-else />
+  </div>
+</template> -->
