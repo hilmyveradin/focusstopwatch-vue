@@ -69,6 +69,17 @@ const router = useRouter()
 const goToSignIn = () => {
   router.push({ name: 'SignIn' })
 }
+
+async function signOut() {
+  try {
+    let { error } = await supabase.auth.signOut()
+    if (error) throw error
+  } catch (error) {
+    alert(error.message)
+  } finally {
+    // loading.value = false
+  }
+}
 </script>
 
 <template>
@@ -81,7 +92,8 @@ const goToSignIn = () => {
         <ul class="flex mr-4 space-x-6">
           <li>Report</li>
           <li>
-            <button @click="goToSignIn">Sign In</button>
+            <button v-if="session" @click="signOut">Sign Out</button>
+            <button v-else @click="goToSignIn">Sign In</button>
           </li>
         </ul>
       </div>
