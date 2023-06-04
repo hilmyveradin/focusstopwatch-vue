@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../supabase.js'
+import SpinnerComponent from '../components/SpinnerComponent.vue'
 
 const session = ref(null)
 const totalCounter = ref(0)
@@ -11,6 +12,8 @@ const hourCounter = ref(0)
 const intervalId = ref(null)
 const buttonText = ref('Start')
 const laps = ref([])
+
+const isLoading = ref(false)
 
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -71,13 +74,14 @@ const goToSignIn = () => {
 }
 
 async function signOut() {
+  isLoading.value = true
   try {
     let { error } = await supabase.auth.signOut()
     if (error) throw error
   } catch (error) {
     alert(error.message)
   } finally {
-    // loading.value = false
+    isLoading.value = false
   }
 }
 </script>
@@ -92,8 +96,13 @@ async function signOut() {
         <ul class="flex mr-4 space-x-6">
           <li>Report</li>
           <li>
-            <button v-if="session" @click="signOut">Sign Out</button>
-            <button v-else @click="goToSignIn">Sign In</button>
+            <SpinnerComponent v-if="isLoading" :is-loading="isLoading"/>
+            <button v-else-if="session" @click="signOut">
+              <span>Sign Out</span>
+            </button>
+            <button v-else @click="goToSignIn">
+              <span>Sign In</span>
+            </button>
           </li>
         </ul>
       </div>
