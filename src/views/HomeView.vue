@@ -12,6 +12,7 @@ const hourCounter = ref(0)
 const intervalId = ref(null)
 const buttonText = ref('Start')
 const laps = ref([])
+const isMenuOpen = ref(false)
 
 const isLoading = ref(false)
 
@@ -28,6 +29,10 @@ onMounted(() => {
 const formattedSecond = computed(() => secondCounter.value.toString().padStart(2, '0'))
 const formattedMinute = computed(() => minuteCounter.value.toString().padStart(2, '0'))
 const formattedHour = computed(() => hourCounter.value.toString().padStart(2, '0'))
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
 
 const formattedLaps = (index) => {
   const lap = laps.value[index]
@@ -88,49 +93,97 @@ async function signOut() {
 
 <template>
   <div>
-  <div class="flex flex-col items-center justify-center w-screen mt-4">
-    <div class="flex-col w-9/12">
-      <div class="flex items-center justify-between h-12 bg-slate-100">
-        <h1 class="ml-4 flex-start">focusStopwatch.com</h1>
+    <div class="flex flex-col items-center justify-center w-screen mt-4">
+      <div class="flex-col w-9/12">
+        <div class="flex items-center justify-between h-12 bg-slate-100">
+          <h1 class="ml-4 flex-start">focusStopwatch.com</h1>
 
-        <ul class="flex mr-4 space-x-6">
-          <li>Report</li>
-          <li>
-            <SpinnerComponent v-if="isLoading" :is-loading="isLoading"/>
-            <button v-else-if="session" @click="signOut">
-              <span>Sign Out</span>
-            </button>
-            <button v-else @click="goToSignIn">
-              <span>Sign In</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500 min-h-1/2">
-        <div class="flex justify-center space-x-5">
-          <div class="p-5 text-white bg-black rounded-lg">{{ formattedHour }}</div>
-          <div class="p-5 text-white bg-black rounded-lg">{{ formattedMinute }}</div>
-          <div class="p-5 text-white bg-black rounded-lg">{{ formattedSecond }}</div>
-        </div>
-        <button class="bg-red-500" @click="startButton">{{ buttonText }}</button>
-        <ul v-if="laps.length > 0">
-          <div class="p-2 my-2 bg-white border border-gray-500 rounded">
-            <li v-for="(lap, index) in laps" :key="index">
-              <div class="flex flex-row p-2 my-2 border border-gray-500 rounded">
-                <div class="w-14">Lap {{ index + 1 }}</div>
-                <div class="separator" />
-                <div>
-                  {{ formattedLaps(index) }}
-                </div>
+          <ul class="flex mr-4">
+            <li class="relative sm:hidden">
+              <button @click="toggleMenu">
+                <svg
+                  class="w-6 h-6 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  ></path>
+                </svg>
+              </button>
+              <div
+                v-if="isMenuOpen"
+                class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-lg shadow-xl"
+              >
+                <ul>
+                  <li
+                    class="block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
+                  >
+                    Report
+                  </li>
+                  <li
+                    class="hidden text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+                  >
+                    <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
+                    <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
+                      <span>Sign Out</span>
+                    </button>
+                    <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
+                      <span>Sign In</span>
+                    </button>
+                  </li>
+                </ul>
               </div>
             </li>
+            <li
+              class="hidden px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+            >
+              Report
+            </li>
+            <li
+              class="hidden text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+            >
+              <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
+              <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
+                <span>Sign Out</span>
+              </button>
+              <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
+                <span>Sign In</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500 min-h-1/2"
+        >
+          <div class="flex justify-center space-x-5">
+            <div class="p-5 text-white bg-black rounded-lg">{{ formattedHour }}</div>
+            <div class="p-5 text-white bg-black rounded-lg">{{ formattedMinute }}</div>
+            <div class="p-5 text-white bg-black rounded-lg">{{ formattedSecond }}</div>
           </div>
-        </ul>
+          <button class="bg-red-500" @click="startButton">{{ buttonText }}</button>
+          <ul v-if="laps.length > 0">
+            <div class="p-2 my-2 bg-white border border-gray-500 rounded">
+              <li v-for="(lap, index) in laps" :key="index">
+                <div class="flex flex-row p-2 my-2 border border-gray-500 rounded">
+                  <div class="w-14">Lap {{ index + 1 }}</div>
+                  <div class="separator" />
+                  <div>
+                    {{ formattedLaps(index) }}
+                  </div>
+                </div>
+              </li>
+            </div>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-  <router-view/>
   </div>
 </template>
 
@@ -138,5 +191,10 @@ async function signOut() {
 .separator {
   border-left: 1px solid black;
   margin: 0 8px;
+}
+
+.pop-out {
+  transform: translateX(0.5rem);
+  transition: transform 0.3s ease;
 }
 </style>

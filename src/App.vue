@@ -1,7 +1,7 @@
 // eslint-disable-next-line eslint-comments/no-unused-disable
 <template>
   <div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
