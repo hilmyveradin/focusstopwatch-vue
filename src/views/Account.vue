@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { supabase } from '../../supabase'
+import { supabase } from '../supabase'
 import { onMounted, ref, toRefs } from 'vue'
 
 // eslint-disable-next-line vue/require-prop-types

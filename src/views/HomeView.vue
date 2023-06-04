@@ -97,7 +97,6 @@ async function signOut() {
       <div class="flex-col w-9/12">
         <div class="flex items-center justify-between h-12 bg-slate-100">
           <h1 class="ml-4 flex-start">focusStopwatch.com</h1>
-
           <ul class="flex mr-4">
             <li class="relative sm:hidden">
               <button @click="toggleMenu">
@@ -122,33 +121,37 @@ async function signOut() {
               >
                 <ul>
                   <li
-                    class="block px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
+                    class="block px-4 py-2 text-sm text-center text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
                   >
                     Report
                   </li>
                   <li
-                    class="hidden text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+                    class="block text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
                   >
                     <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
                     <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
-                      <span>Sign Out</span>
+                      <span class="text-left">Sign Out</span>
                     </button>
                     <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
-                      <span>Sign In</span>
+                      <span class="text-left">Sign In</span>
                     </button>
                   </li>
                 </ul>
               </div>
             </li>
             <li
-              class="hidden px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+              class="hidden w-20 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block h-9"
             >
-              Report
+              <div class="flex flex-col items-center justify-center h-full">
+                <button class="w-full h-full">Report</button>
+              </div>
             </li>
             <li
-              class="hidden text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block"
+              class="hidden w-20 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block h-9"
             >
-              <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
+              <div class="flex flex-col items-center justify-center h-full" v-if="isLoading">
+                <SpinnerComponent :is-loading="isLoading" />
+              </div>
               <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
                 <span>Sign Out</span>
               </button>
@@ -158,10 +161,7 @@ async function signOut() {
             </li>
           </ul>
         </div>
-
-        <div
-          class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500 min-h-1/2"
-        >
+        <div class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500">
           <div class="flex justify-center space-x-5">
             <div class="p-5 text-white bg-black rounded-lg">{{ formattedHour }}</div>
             <div class="p-5 text-white bg-black rounded-lg">{{ formattedMinute }}</div>
