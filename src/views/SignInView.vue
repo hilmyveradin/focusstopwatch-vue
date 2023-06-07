@@ -2,8 +2,10 @@
 import { ref } from 'vue'
 import { supabase } from '../supabase'
 import SpinnerComponent from '../components/SpinnerComponent.vue'
+import SuccessAlertComponent from '../components/SuccessAlertComponent.vue';
 
 const isLoading = ref(false)
+const isShowSuccessAlert = ref(true)
 const email = ref('')
 
 const handleLogin = async () => {
@@ -50,4 +52,14 @@ const handleLogin = async () => {
       </button>
     </div>
   </div>
+  <div class="fixed bottom-0 flex items-center justify-center w-full p-4">
+    <SuccessAlertComponent v-if="isShowSuccessAlert" title="Email Sent!" body="Please check your email"/>
+    <!-- <transition
+enter-active-class="transition duration-300 ease-out transform" enter-class="translate-y-4 opacity-0"
+      enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-300 ease-in transform"
+      leave-class="translate-y-0 opacity-100" leave-to-class="translate-y-4 opacity-0">
+      <SuccessAlertComponent v-if="isShowSuccessAlert" title="Email Sent!" body="Please check your email" />
+    </transition> -->
+  </div>
+
 </template>
