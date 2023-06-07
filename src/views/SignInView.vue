@@ -5,7 +5,7 @@ import SpinnerComponent from '../components/SpinnerComponent.vue'
 import SuccessAlertComponent from '../components/SuccessAlertComponent.vue';
 
 const isLoading = ref(false)
-const isShowSuccessAlert = ref(true)
+const isShowSuccessAlert = ref(false)
 const email = ref('')
 
 const handleLogin = async () => {
@@ -16,7 +16,7 @@ const handleLogin = async () => {
       email: email.value
     })
     if (error) throw error
-    alert('Check your email for the login link!')
+    isShowSuccessAlert.value = true
   } catch (error) {
     if (error instanceof Error) {
       alert(error.message)
@@ -52,14 +52,29 @@ const handleLogin = async () => {
       </button>
     </div>
   </div>
-  <div class="fixed bottom-0 flex items-center justify-center w-full p-4">
+  <div class="fixed bottom-0 flex items-center justify-center w-full p-4 -translate-y-6">
+    <div
+:class="{ 'translate-y-0': !isShowSuccessAlert, 'animate-bounce-once': isShowSuccessAlert }"
+      class="transition-transform duration-100">
     <SuccessAlertComponent v-if="isShowSuccessAlert" title="Email Sent!" body="Please check your email"/>
-    <!-- <transition
-enter-active-class="transition duration-300 ease-out transform" enter-class="translate-y-4 opacity-0"
-      enter-to-class="translate-y-0 opacity-100" leave-active-class="transition duration-300 ease-in transform"
-      leave-class="translate-y-0 opacity-100" leave-to-class="translate-y-4 opacity-0">
-      <SuccessAlertComponent v-if="isShowSuccessAlert" title="Email Sent!" body="Please check your email" />
-    </transition> -->
+    </div>
   </div>
 
 </template>
+
+<style scoped>
+@keyframes bounce-once {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-bounce-once {
+  animation-name: bounce-once;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+}
+</style>
