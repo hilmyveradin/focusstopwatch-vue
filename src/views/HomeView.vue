@@ -48,30 +48,30 @@ const formattedLaps = (index) => {
   return `${hours}:${minutes}:${seconds}`
 }
 
+let startTime = null;
+let elapsedTime = 0;
+
 const startButton = () => {
   if (intervalId.value !== null) {
-    secondCounter.value = 0
-    minuteCounter.value = 0
-    hourCounter.value = 0
-    clearInterval(intervalId.value)
-    intervalId.value = null
-    buttonText.value = 'Start'
-    laps.value.push(totalCounter.value)
-    totalCounter.value = 0
+    buttonText.value = 'Start';
+    elapsedTime = Date.now() - Date.now();
+    secondCounter.value = Math.floor((elapsedTime / 1000) % 60);
+    minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60);
+    hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60);
+    clearInterval(intervalId.value);
+    intervalId.value = null;
+    laps.value.push(totalCounter.value);
+    totalCounter.value = 0;
   } else {
-    buttonText.value = 'Reset and Lap'
+    buttonText.value = 'Reset and Lap';
+    startTime = Date.now() - elapsedTime;
     intervalId.value = setInterval(() => {
-      secondCounter.value += 1
-      totalCounter.value += 1
-      if (secondCounter.value === 60) {
-        secondCounter.value = 0
-        minuteCounter.value += 1
-      }
-      if (minuteCounter.value === 60) {
-        minuteCounter.value = 0
-        hourCounter.value += 1
-      }
-    }, 1000)
+      elapsedTime = Date.now() - startTime;
+      secondCounter.value = Math.floor((elapsedTime / 1000) % 60);
+      minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60);
+      hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60);
+      totalCounter.value = hourCounter.value * 3600 + minuteCounter.value * 60 + secondCounter.value;
+    }, 1000);
   }
 }
 
