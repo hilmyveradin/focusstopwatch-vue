@@ -23,7 +23,6 @@ const handleLogin = async () => {
     isShowSuccessAlert.value = true
   } catch (error) {
     if (error instanceof Error) {
-      // alert(error.message)
       isShowErrorAlert.value = true
       errorMessage.value = error.message
     }
@@ -43,12 +42,12 @@ watch([isShowSuccessAlert, isShowErrorAlert], ([success, error]) => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center w-screen px-4 mt-12">
+  <div class="flex items-center justify-center w-screen px-4 pt-12">
     <div
-      class="flex flex-col items-center justify-center p-4 space-y-4 bg-blue-100 rounded-lg max-w-96"
+      class="flex flex-col items-center justify-center p-4 space-y-4 rounded-lg bg-astral-200 max-w-96"
     >
-      <h1 class="text-xl font-bold">Sign In Using Email</h1>
-      <h3 class="justify-center">
+      <h1 class="text-xl font-bold text-astral-950">Sign In Using Email</h1>
+      <h3 class="justify-center text-astral-800">
         Sign in will be done using verification link that will be sent to your email
       </h3>
       <input
@@ -58,7 +57,7 @@ watch([isShowSuccessAlert, isShowErrorAlert], ([success, error]) => {
         v-model="email"
       />
       <button
-        class="w-40 h-12 p-2 text-center bg-red-100 rounded-lg"
+        class="w-40 h-12 p-2 text-center rounded-lg bg-astral-500 hover:bg-astral-400 text-astral-50"
         :disabled="isLoading"
         @click="handleLogin"
       >

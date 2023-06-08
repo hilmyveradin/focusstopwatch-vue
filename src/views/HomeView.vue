@@ -93,10 +93,10 @@ async function signOut() {
 
 <template>
   <div>
-    <div class="flex flex-col items-center justify-center w-screen mt-4">
-      <div class="flex-col w-9/12">
-        <div class="flex items-center justify-between h-12 bg-slate-100">
-          <h1 class="ml-4 flex-start">focusStopwatch.com</h1>
+    <div class="flex flex-col items-center justify-center w-screen pt-4">
+      <div class="flex-col w-9/12 rounded-xl">
+        <div class="flex items-center justify-between h-12 bg-astral-500 rounded-t-xl">
+          <h1 class="ml-4 text-astral-50 flex-start">FocusStopwatch.com</h1>
           <ul class="flex mr-4">
             <li class="relative sm:hidden">
               <button @click="toggleMenu">
@@ -121,33 +121,33 @@ async function signOut() {
               >
                 <ul>
                   <li
-                    class="block px-4 py-2 text-sm text-center text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
+                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
                   >
                     Report
                   </li>
                   <li
-                    class="block text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white"
+                    class="block text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
                   >
                     <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
                     <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
-                      <span class="text-left">Sign Out</span>
+                      <span class="text-left text-astral-50">Sign Out</span>
                     </button>
                     <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
-                      <span class="text-left">Sign In</span>
+                      <span class="text-left text-astral-50">Sign In</span>
                     </button>
                   </li>
                 </ul>
               </div>
             </li>
             <li
-              class="hidden w-20 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block h-9"
+              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9"
             >
               <div class="flex flex-col items-center justify-center h-full">
                 <button class="w-full h-full">Report</button>
               </div>
             </li>
             <li
-              class="hidden w-20 text-sm text-gray-700 cursor-pointer hover:bg-blue-500 hover:text-white sm:block h-9"
+              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9"
             >
               <div class="flex flex-col items-center justify-center h-full" v-if="isLoading">
                 <SpinnerComponent :is-loading="isLoading" />
@@ -161,17 +161,17 @@ async function signOut() {
             </li>
           </ul>
         </div>
-        <div class="flex flex-col items-center justify-center py-20 space-y-5 bg-blue-500">
+        <div class="flex flex-col items-center justify-center py-20 space-y-5 rounded-b-lg bg-astral-200">
           <div class="flex justify-center space-x-5">
-            <div class="p-5 text-white bg-black rounded-lg">{{ formattedHour }}</div>
-            <div class="p-5 text-white bg-black rounded-lg">{{ formattedMinute }}</div>
-            <div class="p-5 text-white bg-black rounded-lg">{{ formattedSecond }}</div>
+            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedHour }}</div>
+            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedMinute }}</div>
+            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedSecond }}</div>
           </div>
-          <button class="bg-red-500" @click="startButton">{{ buttonText }}</button>
+          <button class="px-16 py-2 rounded-lg bg-astral-500 text-astral-50 hover:bg-astral-400" @click="startButton">{{ buttonText }}</button>
           <ul v-if="laps.length > 0">
-            <div class="p-2 my-2 bg-white border border-gray-500 rounded">
+            <div class="p-2 my-2 border rounded bg-astral-50 border-astral-700">
               <li v-for="(lap, index) in laps" :key="index">
-                <div class="flex flex-row p-2 my-2 border border-gray-500 rounded">
+                <div class="flex flex-row p-2 my-2 border rounded border-astral-700">
                   <div class="w-14">Lap {{ index + 1 }}</div>
                   <div class="separator" />
                   <div>
