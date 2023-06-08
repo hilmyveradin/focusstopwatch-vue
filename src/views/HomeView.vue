@@ -1,8 +1,13 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../supabase.js'
 import SpinnerComponent from '../components/SpinnerComponent.vue'
+import WarningAlertComponent from '../components/WarningAlertComponent.vue'
+
+const isMenuOpen = ref(false)
+const isShowWarningAlert = ref(false)
+const isLoading = ref(false)
 
 const session = ref(null)
 const totalCounter = ref(0)
@@ -12,9 +17,7 @@ const hourCounter = ref(0)
 const intervalId = ref(null)
 const buttonText = ref('Start')
 const laps = ref([])
-const isMenuOpen = ref(false)
 
-const isLoading = ref(false)
 
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -89,6 +92,18 @@ async function signOut() {
     isLoading.value = false
   }
 }
+
+const reportClicked = () =>  {
+  isShowWarningAlert.value = true
+}
+
+watch([isShowWarningAlert], ([success, error]) => {
+  if (success || error) {
+    setTimeout(() => {
+      isShowWarningAlert.value = false;
+    }, 2000);
+  }
+});
 </script>
 
 <template>
@@ -121,7 +136,7 @@ async function signOut() {
               >
                 <ul>
                   <li
-                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
+                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white" @click="reportClicked"
                   >
                     Report
                   </li>
@@ -140,7 +155,7 @@ async function signOut() {
               </div>
             </li>
             <li
-              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9"
+              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9" @click="reportClicked"
             >
               <div class="flex flex-col items-center justify-center h-full">
                 <button class="w-full h-full">Report</button>
@@ -183,6 +198,13 @@ async function signOut() {
           </ul>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="fixed bottom-0 flex items-center justify-center w-full p-4 -translate-y-6">
+    <div
+:class="{ 'translate-y-0': !isShowWarningAlert, 'animate-bounce-once': isShowWarningAlert }"
+      class="transition-transform duration-100">
+    <WarningAlertComponent v-if="isShowWarningAlert" title="Coming Soon!" body="This feature is still under construction 😉" />
     </div>
   </div>
 </template>
