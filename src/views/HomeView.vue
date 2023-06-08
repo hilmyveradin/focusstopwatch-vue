@@ -18,7 +18,6 @@ const intervalId = ref(null)
 const buttonText = ref('Start')
 const laps = ref([])
 
-
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
     session.value = data.session
@@ -93,17 +92,17 @@ async function signOut() {
   }
 }
 
-const reportClicked = () =>  {
+const reportClicked = () => {
   isShowWarningAlert.value = true
 }
 
 watch([isShowWarningAlert], ([success, error]) => {
   if (success || error) {
     setTimeout(() => {
-      isShowWarningAlert.value = false;
-    }, 2000);
+      isShowWarningAlert.value = false
+    }, 2000)
   }
-});
+})
 </script>
 
 <template>
@@ -136,7 +135,8 @@ watch([isShowWarningAlert], ([success, error]) => {
               >
                 <ul>
                   <li
-                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white" @click="reportClicked"
+                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
+                    @click="reportClicked"
                   >
                     Report
                   </li>
@@ -155,7 +155,8 @@ watch([isShowWarningAlert], ([success, error]) => {
               </div>
             </li>
             <li
-              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9" @click="reportClicked"
+              class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9"
+              @click="reportClicked"
             >
               <div class="flex flex-col items-center justify-center h-full">
                 <button class="w-full h-full">Report</button>
@@ -176,13 +177,32 @@ watch([isShowWarningAlert], ([success, error]) => {
             </li>
           </ul>
         </div>
-        <div class="flex flex-col items-center justify-center py-20 space-y-5 rounded-b-lg bg-astral-200">
+        <div
+          class="flex flex-col items-center justify-center py-20 space-y-5 rounded-b-lg bg-astral-200"
+        >
           <div class="flex justify-center space-x-5">
-            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedHour }}</div>
-            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedMinute }}</div>
-            <div class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl">{{ formattedSecond }}</div>
+            <div
+              class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl"
+            >
+              {{ formattedHour }}
+            </div>
+            <div
+              class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl"
+            >
+              {{ formattedMinute }}
+            </div>
+            <div
+              class="flex items-center justify-center w-16 h-20 text-xl text-white rounded-lg bg-astral-800 sm:h-24 sm:w-22 sm:text-4xl"
+            >
+              {{ formattedSecond }}
+            </div>
           </div>
-          <button class="px-16 py-2 rounded-lg bg-astral-500 text-astral-50 hover:bg-astral-400" @click="startButton">{{ buttonText }}</button>
+          <button
+            class="px-16 py-2 rounded-lg bg-astral-500 text-astral-50 hover:bg-astral-400"
+            @click="startButton"
+          >
+            {{ buttonText }}
+          </button>
           <ul v-if="laps.length > 0">
             <div class="p-2 my-2 border rounded bg-astral-50 border-astral-700">
               <li v-for="(lap, index) in laps" :key="index">
@@ -202,9 +222,14 @@ watch([isShowWarningAlert], ([success, error]) => {
   </div>
   <div class="fixed bottom-0 flex items-center justify-center w-full p-4 -translate-y-6">
     <div
-:class="{ 'translate-y-0': !isShowWarningAlert, 'animate-bounce-once': isShowWarningAlert }"
-      class="transition-transform duration-100">
-    <WarningAlertComponent v-if="isShowWarningAlert" title="Coming Soon!" body="This feature is still under construction 😉" />
+      :class="{ 'translate-y-0': !isShowWarningAlert, 'animate-bounce-once': isShowWarningAlert }"
+      class="transition-transform duration-100"
+    >
+      <WarningAlertComponent
+        v-if="isShowWarningAlert"
+        title="Coming Soon!"
+        body="This feature is still under construction 😉"
+      />
     </div>
   </div>
 </template>

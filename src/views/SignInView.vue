@@ -2,15 +2,14 @@
 import { ref, watch } from 'vue'
 import { supabase } from '../supabase'
 import SpinnerComponent from '../components/SpinnerComponent.vue'
-import SuccessAlertComponent from '../components/SuccessAlertComponent.vue';
-import ErrorAlertComponent from '../components/ErrorAlertComponnet.vue';
+import SuccessAlertComponent from '../components/SuccessAlertComponent.vue'
+import ErrorAlertComponent from '../components/ErrorAlertComponnet.vue'
 
 const isLoading = ref(false)
 const isShowSuccessAlert = ref(false)
-const isShowErrorAlert = ref(false);
+const isShowErrorAlert = ref(false)
 const email = ref('')
 const errorMessage = ref('')
-
 
 const handleLogin = async () => {
   try {
@@ -34,11 +33,11 @@ const handleLogin = async () => {
 watch([isShowSuccessAlert, isShowErrorAlert], ([success, error]) => {
   if (success || error) {
     setTimeout(() => {
-      isShowSuccessAlert.value = false;
-      isShowErrorAlert.value = false;
-    }, 2000);
+      isShowSuccessAlert.value = false
+      isShowErrorAlert.value = false
+    }, 2000)
   }
-});
+})
 </script>
 
 <template>
@@ -68,18 +67,26 @@ watch([isShowSuccessAlert, isShowErrorAlert], ([success, error]) => {
   </div>
   <div class="fixed bottom-0 flex items-center justify-center w-full p-4 -translate-y-6">
     <div
-:class="{ 'translate-y-0': !isShowSuccessAlert || !isShowErrorAlert, 'animate-bounce-once': isShowSuccessAlert || isShowErrorAlert }"
-      class="transition-transform duration-100">
-    <SuccessAlertComponent v-if="isShowSuccessAlert" title="Email Sent!" body="Please check your email"/>
-    <ErrorAlertComponent v-if="isShowErrorAlert" title="Error!" :body="errorMessage" />
+      :class="{
+        'translate-y-0': !isShowSuccessAlert || !isShowErrorAlert,
+        'animate-bounce-once': isShowSuccessAlert || isShowErrorAlert
+      }"
+      class="transition-transform duration-100"
+    >
+      <SuccessAlertComponent
+        v-if="isShowSuccessAlert"
+        title="Email Sent!"
+        body="Please check your email"
+      />
+      <ErrorAlertComponent v-if="isShowErrorAlert" title="Error!" :body="errorMessage" />
     </div>
   </div>
-
 </template>
 
 <style scoped>
 @keyframes bounce-once {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {
