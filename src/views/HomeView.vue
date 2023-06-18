@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router'
 import { supabase } from '../supabase.js'
 import SpinnerComponent from '../components/SpinnerComponent.vue'
 import WarningAlertComponent from '../components/WarningAlertComponent.vue'
+import ReportComponent from '../components/ReportComponent.vue'
 
 const isMenuOpen = ref(false)
 const isShowWarningAlert = ref(false)
 const isLoading = ref(false)
+const isShowPopUp = ref(false)
 
 const session = ref(null)
 const totalCounter = ref(0)
@@ -36,6 +38,10 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
 
+// const togglePopup = () => {
+//   isShowPopUp.value = !isShowPopUp.value
+// }
+
 const formattedLaps = (index) => {
   const lap = laps.value[index]
   const hours = Math.floor(lap / 3600)
@@ -48,30 +54,30 @@ const formattedLaps = (index) => {
   return `${hours}:${minutes}:${seconds}`
 }
 
-let startTime = null;
-let elapsedTime = 0;
+let startTime = null
+let elapsedTime = 0
 
 const startButton = () => {
   if (intervalId.value !== null) {
-    buttonText.value = 'Start';
-    elapsedTime = Date.now() - Date.now();
-    secondCounter.value = Math.floor((elapsedTime / 1000) % 60);
-    minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60);
-    hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60);
-    clearInterval(intervalId.value);
-    intervalId.value = null;
-    laps.value.push(totalCounter.value);
-    totalCounter.value = 0;
+    buttonText.value = 'Start'
+    elapsedTime = Date.now() - Date.now()
+    secondCounter.value = Math.floor((elapsedTime / 1000) % 60)
+    minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60)
+    hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60)
+    clearInterval(intervalId.value)
+    intervalId.value = null
+    laps.value.push(totalCounter.value)
+    totalCounter.value = 0
   } else {
-    buttonText.value = 'Reset and Lap';
-    startTime = Date.now() - elapsedTime;
+    buttonText.value = 'Reset and Lap'
+    startTime = Date.now() - elapsedTime
     intervalId.value = setInterval(() => {
-      elapsedTime = Date.now() - startTime;
-      secondCounter.value = Math.floor((elapsedTime / 1000) % 60);
-      minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60);
-      hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60);
-      totalCounter.value = hourCounter.value * 3600 + minuteCounter.value * 60 + secondCounter.value;
-    }, 1000);
+      elapsedTime = Date.now() - startTime
+      secondCounter.value = Math.floor((elapsedTime / 1000) % 60)
+      minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60)
+      hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60)
+      totalCounter.value = hourCounter.value * 3600 + minuteCounter.value * 60 + secondCounter.value
+    }, 1000)
   }
 }
 
@@ -92,8 +98,12 @@ async function signOut() {
   }
 }
 
-const reportClicked = () => {
-  isShowWarningAlert.value = true
+const togglePopUp = () => {
+  if (session.value !== null) {
+    isShowPopUp.value = !isShowPopUp.value
+  } else {
+    isShowWarningAlert.value = true
+  }
 }
 
 watch([isShowWarningAlert], ([success, error]) => {
@@ -115,7 +125,7 @@ watch([isShowWarningAlert], ([success, error]) => {
             <li class="relative sm:hidden">
               <button @click="toggleMenu">
                 <svg
-                  class="w-6 h-6 text-gray-500"
+                  class="w-6 h-6 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -131,12 +141,12 @@ watch([isShowWarningAlert], ([success, error]) => {
               </button>
               <div
                 v-if="isMenuOpen"
-                class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-lg shadow-xl"
+                class="absolute right-0 w-48 py-2 mt-2 rounded-lg shadow-xl bg-astral-500"
               >
                 <ul>
                   <li
-                    class="block px-4 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
-                    @click="reportClicked"
+                    class="block px-2 py-2 text-sm text-center rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
+                    @click="togglePopUp"
                   >
                     Report
                   </li>
@@ -144,10 +154,10 @@ watch([isShowWarningAlert], ([success, error]) => {
                     class="block text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white"
                   >
                     <SpinnerComponent v-if="isLoading" :is-loading="isLoading" />
-                    <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
+                    <button class="w-full h-full px-2 py-2" v-else-if="session" @click="signOut">
                       <span class="text-left text-astral-50">Sign Out</span>
                     </button>
-                    <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
+                    <button class="w-full h-full px-2 py-2" v-else @click="goToSignIn">
                       <span class="text-left text-astral-50">Sign In</span>
                     </button>
                   </li>
@@ -156,7 +166,7 @@ watch([isShowWarningAlert], ([success, error]) => {
             </li>
             <li
               class="hidden w-20 text-sm rounded-md cursor-pointer text-astral-50 hover:bg-astral-400 hover:text-white sm:block h-9"
-              @click="reportClicked"
+              @click="togglePopUp"
             >
               <div class="flex flex-col items-center justify-center h-full">
                 <button class="w-full h-full">Report</button>
@@ -168,10 +178,10 @@ watch([isShowWarningAlert], ([success, error]) => {
               <div class="flex flex-col items-center justify-center h-full" v-if="isLoading">
                 <SpinnerComponent :is-loading="isLoading" />
               </div>
-              <button class="w-full h-full px-4 py-2" v-else-if="session" @click="signOut">
+              <button class="w-full h-full px-2 py-2" v-else-if="session" @click="signOut">
                 <span>Sign Out</span>
               </button>
-              <button class="w-full h-full px-4 py-2" v-else @click="goToSignIn">
+              <button class="w-full h-full px-2 py-2" v-else @click="goToSignIn">
                 <span>Sign In</span>
               </button>
             </li>
@@ -227,10 +237,13 @@ watch([isShowWarningAlert], ([success, error]) => {
     >
       <WarningAlertComponent
         v-if="isShowWarningAlert"
-        title="Coming Soon!"
-        body="This feature is still under construction 😉"
+        title="Sign In first!"
+        body="Please sign in first to see this report 😉"
       />
     </div>
+  </div>
+  <div>
+    <ReportComponent v-if="isShowPopUp" @foobar="togglePopUp" />
   </div>
 </template>
 
