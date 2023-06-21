@@ -1,3 +1,14 @@
+<script>
+export default {
+  props: {
+    isLoading: {
+      type: Boolean,
+      default: false
+    }
+  }
+}
+</script>
+
 <template>
   <svg
     v-if="isLoading"
@@ -17,14 +28,3 @@
     />
   </svg>
 </template>
-
-<script>
-export default {
-  props: {
-    isLoading: {
-      type: Boolean,
-      default: false
-    }
-  }
-}
-</script>

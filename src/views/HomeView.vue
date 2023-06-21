@@ -19,6 +19,9 @@ const hourCounter = ref(0)
 const intervalId = ref(null)
 const buttonText = ref('Start')
 const laps = ref([])
+const lapCounter = ref(0)
+
+const sessionName = ref('')
 
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -38,19 +41,14 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
 
-// const togglePopup = () => {
-//   isShowPopUp.value = !isShowPopUp.value
-// }
-
-const formattedLaps = (index) => {
-  const lap = laps.value[index]
-  const hours = Math.floor(lap / 3600)
+const formattedLaps = (value) => {
+  const hours = Math.floor(value / 3600)
     .toString()
     .padStart(2, '0')
-  const minutes = Math.floor((lap % 3600) / 60)
+  const minutes = Math.floor((value % 3600) / 60)
     .toString()
     .padStart(2, '0')
-  const seconds = (lap % 60).toString().padStart(2, '0')
+  const seconds = (value % 60).toString().padStart(2, '0')
   return `${hours}:${minutes}:${seconds}`
 }
 
@@ -66,9 +64,15 @@ const startButton = () => {
     hourCounter.value = Math.floor(elapsedTime / 1000 / 60 / 60)
     clearInterval(intervalId.value)
     intervalId.value = null
-    laps.value.push(totalCounter.value)
+    const tempDictionary = {
+      key: sessionName.value === '' ? `Laps ${lapCounter.value}` : sessionName.value,
+      value: totalCounter.value
+    };    
+    laps.value.push(tempDictionary)
     totalCounter.value = 0
+    sessionName.value = ''
   } else {
+    lapCounter.value += 1
     buttonText.value = 'Reset and Lap'
     startTime = Date.now() - elapsedTime
     intervalId.value = setInterval(() => {
@@ -207,20 +211,35 @@ watch([isShowWarningAlert], ([success, error]) => {
               {{ formattedSecond }}
             </div>
           </div>
+          <input 
+            class="px-2 py-1 text-sm text-center border border-gray-300 rounded w-60 sm:w-80 sm:text-base"
+            placeholder="Enter your session name (optional)"
+            v-model="sessionName"
+            :disabled="intervalId !== null"
+          />
+          <div class="flex flex-col space-y-2">
           <button
-            class="px-16 py-2 rounded-lg bg-astral-500 text-astral-50 hover:bg-astral-400"
+            class="py-2 rounded-lg w-60 bg-astral-500 text-astral-50 hover:bg-astral-400"
             @click="startButton"
           >
             {{ buttonText }}
           </button>
+          <button
+            v-if="laps.length > 0"
+            class="py-2 bg-red-500 rounded-lg w-60 text-astral-50 hover:bg-red-400"
+            @click="finishButton"
+          >
+            Finish Stopwatch
+          </button>
+        </div>
           <ul v-if="laps.length > 0">
             <div class="p-2 my-2 border rounded bg-astral-50 border-astral-700">
               <li v-for="(lap, index) in laps" :key="index">
                 <div class="flex flex-row p-2 my-2 border rounded border-astral-700">
-                  <div class="w-14">Lap {{ index + 1 }}</div>
+                  <div class="w-32">{{ lap.key }}</div>
                   <div class="separator" />
                   <div>
-                    {{ formattedLaps(index) }}
+                    {{ formattedLaps(lap.value) }}
                   </div>
                 </div>
               </li>

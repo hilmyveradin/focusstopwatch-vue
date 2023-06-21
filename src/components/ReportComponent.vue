@@ -1,3 +1,9 @@
+<script>
+export default {
+  emits: ['foobar']
+}
+</script>
+
 <template>
   <div class="fixed inset-0 flex items-center justify-center">
     <div class="absolute inset-0 bg-gray-500 bg-opacity-50" @click="$emit('foobar')"></div>
@@ -30,9 +36,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  emits: ['foobar']
-}
-</script>
