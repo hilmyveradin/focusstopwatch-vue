@@ -179,16 +179,18 @@ async function saveTimeEntry(userId, startTime, duration) {
 }
 
 const finishButton = () => {
-  let totalDuration = 0
-  for (const lap of laps.value) {
-    totalDuration += lap.value
-  }
-  totalDuration = ((totalDuration % 3600) / 60).toFixed(1);
-  console.log(totalDuration)
-  console.log(startTimeStamp.value)
-  console.log(session.value.user.id)
+  if (session.value !== null) {
+    let totalDuration = 0
+    for (const lap of laps.value) {
+      totalDuration += lap.value
+    }
+    totalDuration = ((totalDuration % 3600) / 60).toFixed(1);
+    console.log(totalDuration)
+    console.log(startTimeStamp.value)
+    console.log(session.value.user.id)
 
-  saveTimeEntry(session.value.user.id, startTimeStamp.value ,totalDuration)
+    saveTimeEntry(session.value.user.id, startTimeStamp.value ,totalDuration)
+  }
   // reset laps and other things
   laps.value = []
   lapCounter.value = 0
