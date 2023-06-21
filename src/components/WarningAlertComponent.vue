@@ -1,3 +1,18 @@
+<script>
+export default {
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    body: {
+      type: String,
+      default: ''
+    }
+  }
+}
+</script>
+
 <template>
   <div
     class="px-4 py-3 text-yellow-900 bg-yellow-100 border-t-4 border-yellow-500 rounded-b shadow-md w-96"
@@ -22,18 +37,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    body: {
-      type: String,
-      default: ''
-    }
-  }
-}
-</script>
