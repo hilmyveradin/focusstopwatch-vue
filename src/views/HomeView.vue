@@ -2,6 +2,7 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '../supabase.js'
+import moment from 'moment'
 import SpinnerComponent from '../components/SpinnerComponent.vue'
 import WarningAlertComponent from '../components/WarningAlertComponent.vue'
 import ReportComponent from '../components/ReportComponent.vue'
@@ -10,6 +11,10 @@ const isMenuOpen = ref(false)
 const isShowWarningAlert = ref(false)
 const isLoading = ref(false)
 const isShowPopUp = ref(false)
+
+const dialyFocusTime = ref(0)
+const weeklyFocusTime = ref(0)
+const monthlyFocusTime = ref(0)
 
 const session = ref(null)
 const totalCounter = ref(0)
@@ -22,6 +27,8 @@ const laps = ref([])
 const lapCounter = ref(0)
 
 const sessionName = ref('')
+
+const startTimeStamp = ref(null)
 
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
@@ -58,6 +65,9 @@ let elapsedTime = 0
 const startButton = () => {
   if (intervalId.value !== null) {
     buttonText.value = 'Start'
+    if (laps.value.length === 0) {
+      startTimeStamp.value = new Date()
+    }
     elapsedTime = Date.now() - Date.now()
     secondCounter.value = Math.floor((elapsedTime / 1000) % 60)
     minuteCounter.value = Math.floor((elapsedTime / 1000 / 60) % 60)
@@ -85,6 +95,105 @@ const startButton = () => {
   }
 }
 
+// async functions
+
+async function getTotalMinutesToday(userId) {
+    const today = moment().startOf('day').toISOString();
+    const tomorrow = moment().startOf('day').add(1, 'days').toISOString();
+    
+    const { data, error } = await supabase
+        .from('time_entries')
+        .select('duration')
+        .eq('user_id', userId)
+        .gte('start_time', today)
+        .lt('start_time', tomorrow);
+
+    if (error) {
+        console.error(`Error fetching total minutes today:`, error);
+        return null;
+    } else {
+        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
+        console.log(`Total minutes today:`, totalMinutes);
+        return totalMinutes;
+    }
+}
+
+async function getTotalMinutesThisWeek(userId) {
+    const startOfWeek = moment().startOf('week').toISOString();
+    const startOfNextWeek = moment().startOf('week').add(1, 'weeks').toISOString();
+    
+    const { data, error } = await supabase
+        .from('time_entries')
+        .select('duration')
+        .eq('user_id', userId)
+        .gte('start_time', startOfWeek)
+        .lt('start_time', startOfNextWeek);
+
+    if (error) {
+        console.error(`Error fetching total minutes this week:`, error);
+        return null;
+    } else {
+        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
+        console.log(`Total minutes this week:`, totalMinutes);
+        return totalMinutes;
+    }
+}
+
+async function getTotalMinutesThisMonth(userId) {
+    const startOfMonth = moment().startOf('month').toISOString();
+    const startOfNextMonth = moment().startOf('month').add(1, 'months').toISOString();
+    
+    const { data, error } = await supabase
+        .from('time_entries')
+        .select('duration')
+        .eq('user_id', userId)
+        .gte('start_time', startOfMonth)
+        .lt('start_time', startOfNextMonth);
+
+    if (error) {
+        console.error(`Error fetching total minutes this month:`, error);
+        return null;
+    } else {
+        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
+        console.log(`Total minutes this month:`, totalMinutes);
+        return totalMinutes;
+    }
+}
+
+async function saveTimeEntry(userId, startTime, duration) {
+    const { data, error } = await supabase
+        .from('time_entries')
+        .insert([
+            {
+                user_id: userId,
+                start_time: startTime,
+                duration: duration,
+            },
+        ])
+
+    if (error) {
+        console.error('Error saving time entry:', error)
+    } else {
+        console.log('Saved time entry:', data)
+    }
+}
+
+const finishButton = () => {
+  let totalDuration = 0
+  for (const lap of laps.value) {
+    totalDuration += lap.value
+  }
+  totalDuration = ((totalDuration % 3600) / 60).toFixed(1);
+  console.log(totalDuration)
+  console.log(startTimeStamp.value)
+  console.log(session.value.user.id)
+
+  saveTimeEntry(session.value.user.id, startTimeStamp.value ,totalDuration)
+  // reset laps and other things
+  laps.value = []
+  lapCounter.value = 0
+}
+
 const router = useRouter()
 const goToSignIn = () => {
   router.push({ name: 'SignIn' })
@@ -102,7 +211,13 @@ async function signOut() {
   }
 }
 
-const togglePopUp = () => {
+const togglePopUp = async () => {
+  if (session.value !== null && isShowPopUp.value === false) {
+    dialyFocusTime.value = await getTotalMinutesToday(session.value.user.id)
+    weeklyFocusTime.value = await getTotalMinutesThisWeek(session.value.user.id)
+    monthlyFocusTime.value = await getTotalMinutesThisMonth(session.value.user.id)
+  }
+  
   if (session.value !== null) {
     isShowPopUp.value = !isShowPopUp.value
   } else {
@@ -225,7 +340,7 @@ watch([isShowWarningAlert], ([success, error]) => {
             {{ buttonText }}
           </button>
           <button
-            v-if="laps.length > 0"
+            v-if="laps.length > 0 && intervalId === null"
             class="py-2 bg-red-500 rounded-lg w-60 text-astral-50 hover:bg-red-400"
             @click="finishButton"
           >
@@ -262,7 +377,13 @@ watch([isShowWarningAlert], ([success, error]) => {
     </div>
   </div>
   <div>
-    <ReportComponent v-if="isShowPopUp" @foobar="togglePopUp" />
+    <ReportComponent 
+      :dialy-focus-time="dialyFocusTime"
+      :weekly-focus-time="weeklyFocusTime"
+      :monthly-focus-time="monthlyFocusTime"
+      @foobar="togglePopUp"
+      v-if="isShowPopUp"
+    />
   </div>
 </template>
 
