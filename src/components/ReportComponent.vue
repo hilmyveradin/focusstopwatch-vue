@@ -13,7 +13,7 @@ export default {
     monthlyFocusTime: {
       type: Number,
       default: 0
-    },
+    }
   }
 }
 </script>
@@ -25,26 +25,28 @@ export default {
       <div class="grid grid-cols-2 gap-4">
         <div class="col-span-2">
           <div class="p-4 text-center bg-astral-200">
-            <h1> Your Dialy Focus Time </h1>
-            <h1 class="text-xl font-bold text-black"> {{ dialyFocusTime }} minutes </h1>
+            <h1>Your Dialy Focus Time</h1>
+            <h1 class="text-xl font-bold text-black">{{ dialyFocusTime }} minutes</h1>
           </div>
         </div>
         <div>
           <div class="p-4 text-center bg-astral-200">
-            <h1> Your Weekly Focus Time </h1>
-            <h1 class="text-xl font-bold text-black"> {{ weeklyFocusTime }} minutes </h1>
+            <h1>Your Weekly Focus Time</h1>
+            <h1 class="text-xl font-bold text-black">{{ weeklyFocusTime }} minutes</h1>
           </div>
         </div>
         <div>
           <div class="p-4 text-center bg-astral-200">
-            <h1> Your Monthly Focus Time </h1>
-            <h1 class="text-xl font-bold text-black"> {{ monthlyFocusTime }} minutes </h1>
+            <h1>Your Monthly Focus Time</h1>
+            <h1 class="text-xl font-bold text-black">{{ monthlyFocusTime }} minutes</h1>
           </div>
         </div>
-        <div/>
+        <div />
         <div class="flex justify-center col-span-2">
           <!-- Button -->
-          <button class="px-4 py-2 text-white rounded bg-astral-500" @click="$emit('foobar')">Back To Stopwatch</button>
+          <button class="px-4 py-2 text-white rounded bg-astral-500" @click="$emit('foobar')">
+            Back To Stopwatch
+          </button>
         </div>
       </div>
     </div>

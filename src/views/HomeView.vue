@@ -77,7 +77,7 @@ const startButton = () => {
     const tempDictionary = {
       key: sessionName.value === '' ? `Laps ${lapCounter.value}` : sessionName.value,
       value: totalCounter.value
-    };    
+    }
     laps.value.push(tempDictionary)
     totalCounter.value = 0
     sessionName.value = ''
@@ -98,84 +98,82 @@ const startButton = () => {
 // async functions
 
 async function getTotalMinutesToday(userId) {
-    const today = moment().startOf('day').toISOString();
-    const tomorrow = moment().startOf('day').add(1, 'days').toISOString();
-    
-    const { data, error } = await supabase
-        .from('time_entries')
-        .select('duration')
-        .eq('user_id', userId)
-        .gte('start_time', today)
-        .lt('start_time', tomorrow);
+  const today = moment().startOf('day').toISOString()
+  const tomorrow = moment().startOf('day').add(1, 'days').toISOString()
 
-    if (error) {
-        console.error(`Error fetching total minutes today:`, error);
-        return null;
-    } else {
-        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
-        console.log(`Total minutes today:`, totalMinutes);
-        return totalMinutes;
-    }
+  const { data, error } = await supabase
+    .from('time_entries')
+    .select('duration')
+    .eq('user_id', userId)
+    .gte('start_time', today)
+    .lt('start_time', tomorrow)
+
+  if (error) {
+    console.error(`Error fetching total minutes today:`, error)
+    return null
+  } else {
+    const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0)
+    console.log(`Total minutes today:`, totalMinutes)
+    return totalMinutes
+  }
 }
 
 async function getTotalMinutesThisWeek(userId) {
-    const startOfWeek = moment().startOf('week').toISOString();
-    const startOfNextWeek = moment().startOf('week').add(1, 'weeks').toISOString();
-    
-    const { data, error } = await supabase
-        .from('time_entries')
-        .select('duration')
-        .eq('user_id', userId)
-        .gte('start_time', startOfWeek)
-        .lt('start_time', startOfNextWeek);
+  const startOfWeek = moment().startOf('week').toISOString()
+  const startOfNextWeek = moment().startOf('week').add(1, 'weeks').toISOString()
 
-    if (error) {
-        console.error(`Error fetching total minutes this week:`, error);
-        return null;
-    } else {
-        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
-        console.log(`Total minutes this week:`, totalMinutes);
-        return totalMinutes;
-    }
+  const { data, error } = await supabase
+    .from('time_entries')
+    .select('duration')
+    .eq('user_id', userId)
+    .gte('start_time', startOfWeek)
+    .lt('start_time', startOfNextWeek)
+
+  if (error) {
+    console.error(`Error fetching total minutes this week:`, error)
+    return null
+  } else {
+    const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0)
+    console.log(`Total minutes this week:`, totalMinutes)
+    return totalMinutes
+  }
 }
 
 async function getTotalMinutesThisMonth(userId) {
-    const startOfMonth = moment().startOf('month').toISOString();
-    const startOfNextMonth = moment().startOf('month').add(1, 'months').toISOString();
-    
-    const { data, error } = await supabase
-        .from('time_entries')
-        .select('duration')
-        .eq('user_id', userId)
-        .gte('start_time', startOfMonth)
-        .lt('start_time', startOfNextMonth);
+  const startOfMonth = moment().startOf('month').toISOString()
+  const startOfNextMonth = moment().startOf('month').add(1, 'months').toISOString()
 
-    if (error) {
-        console.error(`Error fetching total minutes this month:`, error);
-        return null;
-    } else {
-        const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0);
-        console.log(`Total minutes this month:`, totalMinutes);
-        return totalMinutes;
-    }
+  const { data, error } = await supabase
+    .from('time_entries')
+    .select('duration')
+    .eq('user_id', userId)
+    .gte('start_time', startOfMonth)
+    .lt('start_time', startOfNextMonth)
+
+  if (error) {
+    console.error(`Error fetching total minutes this month:`, error)
+    return null
+  } else {
+    const totalMinutes = data.reduce((a, b) => a + (b['duration'] || 0), 0)
+    console.log(`Total minutes this month:`, totalMinutes)
+    return totalMinutes
+  }
 }
 
 async function saveTimeEntry(userId, startTime, duration) {
-    const { data, error } = await supabase
-        .from('time_entries')
-        .insert([
-            {
-                user_id: userId,
-                start_time: startTime,
-                duration: duration,
-            },
-        ])
-
-    if (error) {
-        console.error('Error saving time entry:', error)
-    } else {
-        console.log('Saved time entry:', data)
+  const { data, error } = await supabase.from('time_entries').insert([
+    {
+      user_id: userId,
+      start_time: startTime,
+      duration: duration
     }
+  ])
+
+  if (error) {
+    console.error('Error saving time entry:', error)
+  } else {
+    console.log('Saved time entry:', data)
+  }
 }
 
 const finishButton = () => {
@@ -184,12 +182,12 @@ const finishButton = () => {
     for (const lap of laps.value) {
       totalDuration += lap.value
     }
-    totalDuration = ((totalDuration % 3600) / 60).toFixed(1);
+    totalDuration = ((totalDuration % 3600) / 60).toFixed(1)
     console.log(totalDuration)
     console.log(startTimeStamp.value)
     console.log(session.value.user.id)
 
-    saveTimeEntry(session.value.user.id, startTimeStamp.value ,totalDuration)
+    saveTimeEntry(session.value.user.id, startTimeStamp.value, totalDuration)
   }
   // reset laps and other things
   laps.value = []
@@ -219,7 +217,7 @@ const togglePopUp = async () => {
     weeklyFocusTime.value = await getTotalMinutesThisWeek(session.value.user.id)
     monthlyFocusTime.value = await getTotalMinutesThisMonth(session.value.user.id)
   }
-  
+
   if (session.value !== null) {
     isShowPopUp.value = !isShowPopUp.value
   } else {
@@ -328,27 +326,27 @@ watch([isShowWarningAlert], ([success, error]) => {
               {{ formattedSecond }}
             </div>
           </div>
-          <input 
+          <input
             class="px-2 py-1 text-sm text-center border border-gray-300 rounded w-60 sm:w-80 sm:text-base"
             placeholder="Enter your session name (optional)"
             v-model="sessionName"
             :disabled="intervalId !== null"
           />
           <div class="flex flex-col space-y-2">
-          <button
-            class="py-2 rounded-lg w-60 bg-astral-500 text-astral-50 hover:bg-astral-400"
-            @click="startButton"
-          >
-            {{ buttonText }}
-          </button>
-          <button
-            v-if="laps.length > 0 && intervalId === null"
-            class="py-2 bg-red-500 rounded-lg w-60 text-astral-50 hover:bg-red-400"
-            @click="finishButton"
-          >
-            Finish Stopwatch
-          </button>
-        </div>
+            <button
+              class="py-2 rounded-lg w-60 bg-astral-500 text-astral-50 hover:bg-astral-400"
+              @click="startButton"
+            >
+              {{ buttonText }}
+            </button>
+            <button
+              v-if="laps.length > 0 && intervalId === null"
+              class="py-2 bg-red-500 rounded-lg w-60 text-astral-50 hover:bg-red-400"
+              @click="finishButton"
+            >
+              Finish Stopwatch
+            </button>
+          </div>
           <ul v-if="laps.length > 0">
             <div class="p-2 my-2 border rounded bg-astral-50 border-astral-700">
               <li v-for="(lap, index) in laps" :key="index">
@@ -379,7 +377,7 @@ watch([isShowWarningAlert], ([success, error]) => {
     </div>
   </div>
   <div>
-    <ReportComponent 
+    <ReportComponent
       :dialy-focus-time="dialyFocusTime"
       :weekly-focus-time="weeklyFocusTime"
       :monthly-focus-time="monthlyFocusTime"
