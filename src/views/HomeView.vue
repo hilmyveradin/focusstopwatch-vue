@@ -182,7 +182,7 @@ const finishButton = () => {
     for (const lap of laps.value) {
       totalDuration += lap.value
     }
-    totalDuration = ((totalDuration % 3600) / 60).toFixed(1)
+    totalDuration = (totalDuration / 60).toFixed(1)
     console.log(totalDuration)
     console.log(startTimeStamp.value)
     console.log(session.value.user.id)
